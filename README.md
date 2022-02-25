@@ -15,6 +15,7 @@ Each project should impliment a Movie Finder application that provides a persona
 
 The application, on receiving the request, fetches the list of movies categorized by the genre,
 then matches it against the user preferences and finally passes it over a recommendation engine to suggest a movie response back to the user.
+
 A total of four microservices will be built for this solution. 
 All interactions between the microservices.
 
