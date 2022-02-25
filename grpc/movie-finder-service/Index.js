@@ -36,9 +36,21 @@ async function run() {
             })
             pipeline(
                 movieStoreClient.getMovies({genre}),
-                addUserIdTransform(userId),
+                new Transform({
+                    objectMode: true,
+                    transform({movie}, encoding, callback) {
+                        callback(null, {userId, movie});
+                    }
+                }),
                 userPreferencesClient.getShortlistedMovies(),
-                recommendMovieStream,
+                recommenderClient.getRecommendedMovie((err, recommenderResponse) => {
+                    console.timeEnd("find movie");
+                    if (err) {
+                        console.error(err);
+                        return next(err)
+                    }
+                    return res.send(recommenderResponse);
+                }),
                 (err) => {
                     if (err) {
                         next({message: err.message})
