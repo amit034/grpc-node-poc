@@ -1,0 +1,23 @@
+syntax = "proto3";
+enum Genre {
+  COMEDY = 0;
+  ACTION = 1;
+  THRILLER = 2;
+  DRAMA = 3;
+}
+message Movie {
+  string title = 1;
+  double rating = 2;
+  Genre genre = 3;
+  string description = 4;
+}
+message MovieStoreRequest {
+  Genre genre = 1;
+}
+message MovieStoreResponse {
+  Movie movie = 1;
+}
+service MovieStoreService {
+  // server streaming rpc call to receive a stream of movies
+rpc getMovies(MovieStoreRequest) returns (stream MovieStoreResponse) {};
+}
