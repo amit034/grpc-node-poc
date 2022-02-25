@@ -1,5 +1,4 @@
 # grpc-node-poc
-
 in this poc i will try to test the performance of using grpc node vs rest api. in the world of micro services.
 we will try to create 2 project identical as posibale seperate only by the comunication layer.
 
