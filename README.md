@@ -11,8 +11,9 @@ we will use this use case to illustrate all the four API types supported by gRPC
 
 # The requiremnets
 
-each project should impliment a Movie Finder application that provides a personalized movie recommendation based on the genre input received from the user.
-The application, on receiving the request, fetches the list of movies categorized by the genre, then matches it against the user preferences and finally passes it over a recommendation engine to suggest a movie response back to the user.
+Each project should impliment a Movie Finder application that provides a personalized movie recommendation based on the genre input received from the user.
+The application, on receiving the request, fetches the list of movies categorized by the genre,
+then matches it against the user preferences and finally passes it over a recommendation engine to suggest a movie response back to the user.
 A total of four microservices will be built for this solution. 
 All interactions between the microservices.
 
