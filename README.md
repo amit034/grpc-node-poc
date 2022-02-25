@@ -9,7 +9,7 @@ we will use this use case to illustrate all the four API types supported by gRPC
 * Client streaming 
 * Bidirectional streaming
 
-# The requiremnets
+# The Requiremnets
 
 Each project should impliment a Movie Finder application that provides a personalized movie recommendation based on the genre input received from the user.
 
