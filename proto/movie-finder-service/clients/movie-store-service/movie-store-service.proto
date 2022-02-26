@@ -14,6 +14,7 @@ message Movie {
 message MovieStoreRequest {
   Genre genre = 1;
 }
+
 message MovieStoreResponse {
-  Movie movie = 1;
+  repeated Movie movies = 1;
 }

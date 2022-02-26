@@ -13,10 +13,15 @@ message Movie {
   string description = 4;
 }
 
-message UserPreferencesRequest {
+message UserPreferencesRequestPayload {
   int32 user_id = 1;
   Movie movie = 2;
 }
+
+message UserPreferencesRequest {
+  repeated UserPreferencesRequestPayload payload = 1;
+}
+
 message UserPreferencesResponse {
-  Movie movie = 1;
+  repeated Movie movies = 1;
 }

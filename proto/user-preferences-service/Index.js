@@ -21,26 +21,20 @@ async function run() {
         try {
             const UserPreferencesRequest = root.lookup('UserPreferencesRequest');
             const UserPreferencesResponse = root.lookup('UserPreferencesResponse');
-            const userPreferencesRequests = [];
-            const reader = Reader.create(req.body);
-            while (reader.pos < reader.len) {
-                const message = UserPreferencesRequest.decodeDelimited(reader);
-                userPreferencesRequests.push(UserPreferencesRequest.toObject(message));
-            }
-            const shortListed = _.filter(userPreferencesRequests,(userPreferencesRequest) => {
+            const messageIn = UserPreferencesRequest.decode(req.body);
+            const {payload} = UserPreferencesRequest.toObject(messageIn);
+            const shortListed = _.reduce(payload,(agg, userPreferencesRequest) => {
                 let userId = userPreferencesRequest.userId;
                 let movie = userPreferencesRequest.movie;
-                return isEligible(userId, movie);
-            });
-            const buffer = _.reduce(shortListed, (buf, {movie} ) => {
-                const message = UserPreferencesResponse.create({movie});
-                UserPreferencesResponse.encodeDelimited(message, buf);
-                return buf;
-            }, new BufferWriter())
+                if (isEligible(userId, movie)) {
+                    agg.push(movie);
+                }
+                return agg;
+            }, []);
 
-            const userPreferencesResponse = buffer.finish();
+            const messageOut = UserPreferencesResponse.create({movies: shortListed});
             res.setHeader('Content-Type', 'application/octet-stream');
-            res.send(userPreferencesResponse);
+            res.send( UserPreferencesResponse.encode(messageOut).finish());
         } catch (e) {
             next(e);
         }

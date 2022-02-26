@@ -43,13 +43,8 @@ async function run() {
             const movies  = _.filter(db, (movie) => {
                 return isEligible(movieStoreRequest, movie);
             });
-            const buffer = _.reduce(movies, (buf, movie ) => {
-                const message = MovieStoreResponse.create({movie});
-                MovieStoreResponse.encodeDelimited(message, buf);
-                return buf;
-            }, new BufferWriter())
-
-            const movieStoreResponse = buffer.finish();
+            const message = MovieStoreResponse.create({movies});
+            const movieStoreResponse = MovieStoreResponse.encode(message).finish();
             res.setHeader('Content-Type', 'application/octet-stream');
             res.send(movieStoreResponse);
         } catch (e) {

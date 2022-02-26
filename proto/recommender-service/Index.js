@@ -7,7 +7,7 @@ const app = express();
 const router = express.Router();
 app.use(bodyParser.raw({limit: '50mb'}))
 const port = 4053;
-function findMovieForRecommendation(movies) {
+function findMovieForRecommendation({movies}) {
     return movies[Math.floor(Math.random() * movies.length)];
 }
 
@@ -17,14 +17,10 @@ async function run() {
         try {
             const RecommenderRequest = root.lookup('RecommenderRequest');
             const RecommenderResponse = root.lookup('RecommenderResponse');
-            const recommenderRequests = [];
-            const reader = Reader.create(req.body);
-            while (reader.pos < reader.len) {
-                const message = RecommenderRequest.decodeDelimited(reader);
-                recommenderRequests.push(RecommenderRequest.toObject(message));
-            }
-            const message = RecommenderResponse.create(findMovieForRecommendation(recommenderRequests))
-            const buf = RecommenderResponse.encode(message).finish();
+            const messageIn = RecommenderRequest.decode(req.body);
+            const recommenderRequest = RecommenderRequest.toObject(messageIn);
+            const messageOut = RecommenderResponse.create({movie: findMovieForRecommendation(recommenderRequest)});
+            const buf = RecommenderResponse.encode(messageOut).finish();
             res.send(buf);
         } catch (e) {
             next(e);

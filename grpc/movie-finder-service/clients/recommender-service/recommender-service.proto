@@ -13,7 +13,7 @@ message Movie {
   string description = 4;
 }
 message RecommenderRequest {
-  Movie movie = 2;
+  Movie movie = 1;
 }
 message RecommenderResponse {
   Movie movie = 1;

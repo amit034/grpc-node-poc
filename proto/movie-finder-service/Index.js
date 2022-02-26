@@ -10,8 +10,8 @@ const userPreferences = require('./clients/user-preferences-service');
 const recommender = require('./clients/recommender-service');
 
 function addUserId(userId)  {
-    return (movies) => {
-        return _.map(movies, ({movie})=> {
+    return ({movies}) => {
+        return _.map(movies, (movie)=> {
             return {userId, movie};
         }, []);
     }
@@ -19,7 +19,6 @@ function addUserId(userId)  {
 async function run() {
     router.post('/findMovie', async function(req, res, next) {
         try {
-            console.time("find movie");
             const movieStoreClient = movieStore.getClient();
             const userPreferencesClient = userPreferences.getClient();
             const recommenderClient = recommender.getClient();
@@ -28,7 +27,6 @@ async function run() {
             .then(addUserId(userId))
             .then(userPreferencesClient.getShortlistedMovies)
             .then(recommenderClient.getRecommendedMovie);
-            console.timeEnd("find movie");
             return res.send(recommenderResponse);
         } catch (e) {
             next(e);

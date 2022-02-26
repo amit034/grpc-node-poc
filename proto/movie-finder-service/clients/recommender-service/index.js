@@ -8,14 +8,9 @@ module.exports = {
         const RecommenderRequest = root.lookup('RecommenderRequest');
         const RecommenderResponse = root.lookup('RecommenderResponse');
         return  {
-            getRecommendedMovie(recommenderRequests) {
-                const buffer = _.reduce(recommenderRequests, (buf, recommenderRequest) => {
-                    const message = RecommenderRequest.create(recommenderRequest);
-                    RecommenderRequest.encodeDelimited(message, buf);
-                    return buf;
-                }, new BufferWriter())
-
-                const data = buffer.finish();
+            getRecommendedMovie(recommenderRequest) {
+                const message = RecommenderRequest.create(recommenderRequest);
+                const data =  RecommenderRequest.encode(message).finish();
                 return axios({
                     method: 'post',
                     url: 'http://localhost:4053/RecommenderService/getRecommendedMovie',

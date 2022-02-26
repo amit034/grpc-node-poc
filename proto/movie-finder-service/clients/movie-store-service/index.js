@@ -21,13 +21,8 @@ module.exports = {
                         'Accept': 'application/octet-stream'
                     }
                 }).then(({data}) => {
-                    const movieStoreResponses = [];
-                    const reader = Reader.create(data);
-                    while (reader.pos < reader.len) {
-                        const message = MovieStoreResponse.decodeDelimited(reader);
-                        movieStoreResponses.push(MovieStoreResponse.toObject(message));
-                    }
-                    return movieStoreResponses;
+                    const message = MovieStoreResponse.decode(data);
+                    return MovieStoreResponse.toObject(message);
                 });
             }
         }
