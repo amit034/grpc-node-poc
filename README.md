@@ -22,13 +22,13 @@ All interactions between the microservices.
 
 Each microservice will be running a separate gRPC server. This is a design choice. The general recommended practice is to have dedicated servers sitting behind load balancers for each microservice.
 
-Movie Finder – An external service that publishes API for client/ UI  to interact with the application writen as rest api just fro testing.
-                but calles the internal services using gRPC
+Movie Finder – An external service that publishes API for client/ UI  to interact with the application written as rest api just for testing.
+                but calls the internal services using gRPC
 
 Movie store – Holds a database of movie records. This can be thought of as something like omdb.org 
               will stream movies to the response each time it ready.
 
-User Preferences – Keeps track of user perefrences. For simplicity, we can will use the movie rating to filter the user movies perefrernces.
+User Preferences – Keeps track of user preferences. For simplicity, we can will use the movie rating to filter the user movies preferences.
                    will get a stream of movies check if its eligible and strem eligible movies to the response. 
 
 Recommender – The component that holds all the logic for making a  movie recommendation.
