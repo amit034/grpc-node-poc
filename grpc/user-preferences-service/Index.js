@@ -11,20 +11,19 @@ const usersPreferences = {
     2: ({rating}) => rating >= 8.5,
     default: () => true
 }
-function isEligible(userId, movie) {
-    return _.get(usersPreferences, `${userId}`, usersPreferences.default)(movie);
+async function isMovieEligible(userId, movie) {
+    return new Promise(resolve => setTimeout(() => resolve(_.get(usersPreferences, `${userId}`, usersPreferences.default)(movie)), 10));
 }
 
 const server = new grpc.Server();
 
 server.addService(root.UserPreferencesService.service,  {
     getShortlistedMovies: (call) => {
-        call.on('data', function(movieRequest){
+        call.on('data', async function(movieRequest){
             let userId = movieRequest.userId;
             let movie = movieRequest.movie;
-            if (isEligible(userId, movie)) {
-                call.write({movie});
-            }
+            const isEligible = await isMovieEligible(userId, movie);
+            if (isEligible) call.write({movie});
         });
         call.on('end', () => {
             call.end();

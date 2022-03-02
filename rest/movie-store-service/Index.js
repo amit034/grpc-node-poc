@@ -25,18 +25,21 @@ const sample = [
     {title: 'The Dark Knight', description: 'Sci fi action', rating: 9.0, genre: Genre.ACTION}
 ]
 
-const db = _.flatten(_.fill(Array(10000),sample));
-function isEligible(movieStoreRequest, movie) {
-    return movieStoreRequest.genre === movie.genre;
+const db = _.flatten(_.fill(Array(10),sample));
+async function isMovieEligible(movieStoreRequest, movie) {
+    return new Promise((resolve) => setTimeout(() =>  resolve(movieStoreRequest.genre === movie.genre), 10));
 }
-
 async function run() {
     router.post('/getMovies', async function(req, res, next) {
         try {
             console.debug(`movie store size: ${_.size(db)}`);
-            const movies  = _.filter(db, (movie) => {
-                return isEligible(req.body, movie);
-            });
+            const movies  = [];
+            for (let i = 0; i < db.length; ++i) {
+                const movie = db[i];
+                const isEligible = await isMovieEligible(req.body, movie);
+                if (isEligible) movies.push(movie);
+
+            }
             res.send(movies);
         } catch (e) {
             next(e);

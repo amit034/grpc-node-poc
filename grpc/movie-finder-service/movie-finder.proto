@@ -21,3 +21,40 @@ message MovieFinderResponse {
 service MovieFinderService {
   rpc findMovie(MovieFinderRequest) returns (MovieFinderResponse) {};
 }
+
+// MovieStoreService
+message MovieStoreRequest {
+  Genre genre = 1;
+}
+message MovieStoreResponse {
+  Movie movie = 1;
+}
+service MovieStoreService {
+  // server streaming rpc call to receive a stream of movies
+  rpc getMovies(MovieStoreRequest) returns (stream MovieStoreResponse) {};
+}
+
+
+//UserPreferencesService
+message UserPreferencesRequest {
+  int32 user_id = 1;
+  Movie movie = 2;
+}
+message UserPreferencesResponse {
+  Movie movie = 1;
+}
+service UserPreferencesService {
+  // Bidirectional streaming rpc call to receive a stream of movies shortlisted based on user preferences
+  rpc getShortlistedMovies(stream UserPreferencesRequest) returns (stream UserPreferencesResponse) {};
+}
+//RecommenderService
+message RecommenderRequest {
+  Movie movie = 1;
+}
+message RecommenderResponse {
+  Movie movie = 1;
+}
+service RecommenderService {
+  // client streaming request that receives a stream of movies and recommends one
+  rpc getRecommendedMovie(stream RecommenderRequest) returns (RecommenderResponse) {};
+}

@@ -26,9 +26,9 @@ const sample = [
     {title: 'The Dark Knight', description: 'Sci fi action', rating: 9.0, genre: Genre.ACTION}
 ]
 
-const db = _.flatten(_.fill(Array(10000),sample));
-function isEligible(movieStoreRequest, movie) {
-    return movieStoreRequest.genre === movie.genre;
+const db = _.flatten(_.fill(Array(10),sample));
+async function isMovieEligible(movieStoreRequest, movie) {
+    return new Promise(resolve => setTimeout(() => resolve(movieStoreRequest.genre === movie.genre), 10));
 }
 
 async function run() {
@@ -40,9 +40,12 @@ async function run() {
             const messageIn = MovieStoreRequest.decode(req.body);
             const movieStoreRequest = MovieStoreRequest.toObject(messageIn);
             console.debug(`movie store size: ${_.size(db)}`);
-            const movies  = _.filter(db, (movie) => {
-                return isEligible(movieStoreRequest, movie);
-            });
+            const movies  = [];
+            for (let i = 0; i < db.length; ++i) {
+                const movie = db[i];
+                const isEligible = await isMovieEligible(movieStoreRequest, movie);
+                if (isEligible) movies.push(movie);
+            }
             const message = MovieStoreResponse.create({movies});
             const movieStoreResponse = MovieStoreResponse.encode(message).finish();
             res.setHeader('Content-Type', 'application/octet-stream');

@@ -21,13 +21,11 @@ function addUserIdTransform(userId) {
 async function run() {
     router.post('/findMovie', async function(req, res, next) {
         try {
-            console.time("find movie");
             const movieStoreClient = movieStore.getClient();
             const userPreferencesClient = userPreferences.getClient();
             const recommenderClient = recommender.getClient();
             const {userId, genre} = req.body;
             const recommendMovieStream = recommenderClient.getRecommendedMovie((err, recommenderResponse) => {
-                console.timeEnd("find movie");
                 if (err) {
                     console.error(err);
                     return next(err)
@@ -44,7 +42,6 @@ async function run() {
                 }),
                 userPreferencesClient.getShortlistedMovies(),
                 recommenderClient.getRecommendedMovie((err, recommenderResponse) => {
-                    console.timeEnd("find movie");
                     if (err) {
                         console.error(err);
                         return next(err)

@@ -21,20 +21,21 @@ const sample = [
     {title: 'Inception', description: 'Sci fi action', rating: 8.8, genre: Genre.ACTION},
     {title: 'The Dark Knight', description: 'Sci fi action', rating: 9.0, genre: Genre.ACTION}
 ]
-const db = _.flatten(_.fill(Array(10000),sample));
-function isEligible(movieStoreRequest, movie) {
-    return movieStoreRequest.genre === movie.genre;
+const db = _.flatten(_.fill(Array(10),sample));
+async function isMovieEligible(movieStoreRequest, movie) {
+    return new Promise(resolve => setTimeout(() => resolve(movieStoreRequest.genre === movie.genre), 10));
 }
 const server = new grpc.Server();
 server.addService(root.MovieStoreService.service,  {
     getMovies: async(call) => {
         console.debug(`movie store size: ${_.size(db)}`);
         console.time("get movies from store");
-        await Promise.all(_.map(db, movie => {
-            if(isEligible(call.request, movie)) {
-               call.write({movie});
-            }
-        }));
+        for (let i = 0; i < db.length; ++i) {
+            const movie = db[i];
+            const isEligible = await isMovieEligible(call.request, movie);
+            if (isEligible) call.write({movie});
+
+        }
         call.end();
         console.timeEnd("get movies from store");
     }

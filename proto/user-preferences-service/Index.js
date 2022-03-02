@@ -12,8 +12,9 @@ const usersPreferences = {
     2: ({rating}) => rating >= 8.5,
     default: () => true
 }
-async function isEligible(userId, movie) {
-    return _.get(usersPreferences, `${userId}`, usersPreferences.default)(movie);
+
+async function isMovieEligible(userId, movie) {
+    return new Promise(resolve => setTimeout(() => resolve(_.get(usersPreferences, `${userId}`, usersPreferences.default)(movie)), 10));
 }
 async function run() {
     const root = loadSync( __dirname + '/user-preferences-service.proto');
@@ -23,15 +24,14 @@ async function run() {
             const UserPreferencesResponse = root.lookup('UserPreferencesResponse');
             const messageIn = UserPreferencesRequest.decode(req.body);
             const {payload} = UserPreferencesRequest.toObject(messageIn);
-            const shortListed = _.reduce(payload,(agg, userPreferencesRequest) => {
-                let userId = userPreferencesRequest.userId;
-                let movie = userPreferencesRequest.movie;
-                if (isEligible(userId, movie)) {
-                    agg.push(movie);
-                }
-                return agg;
-            }, []);
-
+            const shortListed = [];
+            for (let i = 0; i < payload.length; ++i) {
+                const movieRequest = payload[i];
+                let userId = movieRequest.userId;
+                let movie = movieRequest.movie;
+                const isEligible = await isMovieEligible(userId, movie);
+                if (isEligible) shortListed.push(movie);
+            }
             const messageOut = UserPreferencesResponse.create({movies: shortListed});
             res.setHeader('Content-Type', 'application/octet-stream');
             res.send( UserPreferencesResponse.encode(messageOut).finish());

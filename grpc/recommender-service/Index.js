@@ -15,18 +15,11 @@ server.addService(root.RecommenderService.service,  {
         const movies = [];
         let h = false;
         call.on('data',function(recommenderRequest) {
-            if (!h) {
-               console.time("recommending movie");
-               h = true;
-            }
-
             let movie = recommenderRequest.movie;
             movies.push(movie);
         });
         call.on('end',function(){
             callback(null, {movie: findMovieForRecommendation(movies)});
-            console.timeEnd("recommending movie");
-            h = false;
         });
     },
 })

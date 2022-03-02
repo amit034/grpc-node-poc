@@ -11,17 +11,25 @@ const usersPreferences = {
     2: ({rating}) => rating >= 8.5,
     default: () => true
 }
-async function isEligible(userId, movie) {
-    return _.get(usersPreferences, `${userId}`, usersPreferences.default)(movie);
+async function isMovieEligible(userId, movie) {
+    return new Promise((resolve) => {
+        setTimeout(() => {
+            resolve(_.get(usersPreferences, `${userId}`, usersPreferences.default)(movie));
+        },10)
+    })
 }
 async function run() {
     router.post('/getShortlistedMovies', async function(req, res, next) {
         try {
-            const shortListed = _.filter(req.body,(movieRequest) => {
+            const shortListed  = [];
+            const movieRequests = _.get(req, 'body', []);
+            for (let i = 0; i < movieRequests.length; ++i) {
+                const movieRequest = movieRequests[i];
                 let userId = movieRequest.userId;
                 let movie = movieRequest.movie;
-                return isEligible(userId, movie);
-            });
+                const isEligible = await isMovieEligible(userId, movie);
+                if (isEligible) shortListed.push(movie);
+            }
             res.send(shortListed);
         } catch (e) {
             next(e);
