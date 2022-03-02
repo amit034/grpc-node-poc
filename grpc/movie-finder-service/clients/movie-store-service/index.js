@@ -16,15 +16,6 @@ let client
 module.exports = {
     getClient: () => {
         if (!client) {
-            // const getMovies = _.assign({}, MovieStoreService.service.getMovies, {
-            //     responseDeserialize: (r) => {
-            //         return r;
-            //     },
-            // })
-            // const Client = makeGenericClientConstructor({
-            //     'getMovies' : getMovies
-            // });
-            // client = new Client('localhost:50051', credentials.createInsecure());
             client = new MovieStoreService('localhost:50051', credentials.createInsecure());
         }
         return client;
